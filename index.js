@@ -1,18 +1,9 @@
-const express = require("express");
-const cors = require("cors");
-const dbConnect = require("./configs/db");
-const app = express();
-require("dotenv").config();
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const app = require("./src/app.js");
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
-
-app.listen(3000, () => {
+const server = app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
 
-dbConnect();
+process.on("SIGINT", () => {
+  server.close(() => console.log("Exit server express"));
+});
