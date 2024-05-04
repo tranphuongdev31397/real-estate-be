@@ -7,6 +7,7 @@ const {
   AuthFailError,
   BadRequestError,
 } = require("./core/error.response.js");
+const router = require("./routes/v1/index.js");
 const app = express();
 require("dotenv").config();
 require("./configs/db.js");
@@ -21,14 +22,7 @@ app.get(
     res.send("Hello World");
   })
 );
-
-app.get(
-  "/test-errors",
-  asyncHandler((req, res) => {
-    throw new BadRequestError();
-    res.send("Hello World");
-  })
-);
+app.use(router);
 
 app.use((req, res, next) => {
   const error = new Error("Not Found");

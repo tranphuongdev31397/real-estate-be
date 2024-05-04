@@ -1,4 +1,6 @@
 "use strict";
+const { v4: uuidv4 } = require("uuid");
+
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -13,11 +15,28 @@ module.exports = (sequelize, DataTypes) => {
   }
   User.init(
     {
-      name: DataTypes.STRING,
-      phone: DataTypes.STRING,
-      email: DataTypes.STRING,
+      name: {
+        type: DataTypes.STRING,
+        validate: {
+          min: 3,
+          max: 50,
+        },
+      },
+      phone: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      email: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+      },
       address: DataTypes.STRING,
-      password: DataTypes.STRING,
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       role: {
         type: DataTypes.ENUM,
         values: ["ADMIN", "AGENT", "USER"],
@@ -30,5 +49,7 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "User",
     }
   );
+
+  User.beforeCreate((user) => (user.id = uuidv4()));
   return User;
 };

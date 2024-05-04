@@ -1,7 +1,6 @@
 "use strict";
 
 const _ = require("lodash");
-const { Types } = require("mongoose");
 const moment = require("moment");
 
 const getInitData = ({ fields = [], object = {} }) => {
@@ -63,7 +62,6 @@ module.exports = {
   getSelectData,
   getUnselectData,
   removeUndefinedAndNullNestedObject,
-  convertToMongoObjectId,
   checkExpiredDate,
   countOccurrencesByKey,
 };
