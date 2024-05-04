@@ -17,8 +17,6 @@ class SuccessResponse {
   send(res, headers = {}) {
     return res.status(this.status).json(this);
   }
-
-  
 }
 
 class OK extends SuccessResponse {
@@ -32,10 +30,10 @@ class OK extends SuccessResponse {
 
 class Created extends SuccessResponse {
   constructor({
-    message,
+    message = null,
     statusCode = StatusCodes.CREATED,
     reasonStatus = ReasonPhrases.CREATED,
-    metadata,
+    metadata = null,
   }) {
     super({
       message,
@@ -49,5 +47,5 @@ class Created extends SuccessResponse {
 module.exports = {
   OK,
   Created,
-  SuccessResponse
+  SuccessResponse,
 };
