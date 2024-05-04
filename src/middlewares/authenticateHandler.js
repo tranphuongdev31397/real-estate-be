@@ -15,8 +15,6 @@ const authenticateHandler = asyncHandler(async (req, res, next) => {
   } else {
     const accessTokenSplit = accessToken.replaceAll("Bearer ", "");
     JWT.verify(accessTokenSplit, ENV.JWT_SECRET, (error, decode) => {
-      console.log(decode);
-      console.log(error);
       if (error) {
         throw new AuthFailError("Token expired!", 409);
       } else {

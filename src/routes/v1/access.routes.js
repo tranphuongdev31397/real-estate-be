@@ -2,6 +2,7 @@ const {
   signUpController,
   signInController,
 } = require("../../controllers/access.controller");
+const { SuccessResponse } = require("../../core/success.response");
 const { authenticateHandler } = require("../../middlewares");
 const asyncHandler = require("../../middlewares/asyncHandler");
 
@@ -12,7 +13,10 @@ accessRoutes.post("/sign-in", asyncHandler(signInController));
 
 // ===== Authentication routes =====
 accessRoutes.use(authenticateHandler);
-accessRoutes.get("/get-info", (req, res) => {
-  res.json(req.userInfo).send("Authenticated");
-});
+accessRoutes.get(
+  "/get-info",
+  asyncHandler((req, res) => {
+    new SuccessResponse({ metadata: req.userInfo }).send(res);
+  })
+);
 module.exports = accessRoutes;
