@@ -1,5 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
+const { v4: uuidv4 } = require("uuid");
+
 module.exports = (sequelize, DataTypes) => {
   class KeyToken extends Model {
     /**
@@ -13,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "userId",
         as: "user",
         targetKey: "id",
+        onDelete: "CASCADE",
       });
     }
   }
@@ -22,15 +25,25 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         allowNull: false,
       },
-      privateKey: DataTypes.STRING,
-      publicKey: DataTypes.STRING,
-      refreshToken: DataTypes.STRING,
+      privateKey: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      publicKey: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      refreshToken: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
     },
     {
       sequelize,
       modelName: "KeyToken",
     }
   );
-  KeyToken.beforeCreate((raw) => (raw.id = uuidv4()));
+
+  KeyToken.beforeCreate((keyToken) => (keyToken.id = uuidv4()));
   return KeyToken;
 };

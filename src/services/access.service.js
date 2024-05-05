@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt");
 const { getInitData } = require("../utils");
 const JWT = require("jsonwebtoken");
 const ENV = require("../configs/env");
+const { generateToken } = require("../utils/auth");
 class AccessService {
   static async signUp({ phone, email, password }) {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -36,16 +37,11 @@ class AccessService {
       fields: ["id", "name", "email", "phone"],
     });
 
+    const tokens = await generateToken(initData);
+
     return {
       user: initData,
-      tokens: {
-        accessToken: JWT.sign(initData, ENV.JWT_SECRET, {
-          expiresIn: ENV.JWT_EXPIRES_IN,
-        }),
-        refreshToken: JWT.sign(initData, ENV.JWT_SECRET, {
-          expiresIn: ENV.JWT_REFRESH_EXPIRES_IN,
-        }),
-      },
+      tokens,
     };
   }
 
@@ -53,8 +49,8 @@ class AccessService {
     const data = await db.User.findOne({
       where: {
         [Op.or]: {
-          phone,
-          email,
+          phone: phone || null,
+          email: email || null,
         },
       },
     });
@@ -76,17 +72,11 @@ class AccessService {
       fields: ["id", "name", "email", "phone"],
     });
 
+    const tokens = await generateToken(initData);
+
     return {
       user: initData,
-
-      tokens: {
-        accessToken: JWT.sign(initData, ENV.JWT_SECRET, {
-          expiresIn: ENV.JWT_EXPIRES_IN,
-        }),
-        refreshToken: JWT.sign(initData, ENV.JWT_SECRET, {
-          expiresIn: ENV.JWT_REFRESH_EXPIRES_IN,
-        }),
-      },
+      tokens,
     };
   }
 }
