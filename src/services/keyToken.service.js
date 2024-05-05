@@ -22,6 +22,17 @@ class KeyTokenService {
 
     return keyStore;
   }
+
+  static async getKeyTokenByUserId(userId) {
+    const keyStore = await db.KeyToken.findOne({
+      where: {
+        userId,
+      },
+      attributes: ["id", "privateKey", "refreshToken"],
+    });
+
+    return keyStore?.dataValues;
+  }
 }
 
 module.exports = KeyTokenService;

@@ -79,6 +79,14 @@ class AccessService {
       tokens,
     };
   }
+
+  static async signOut() {
+    await db.KeyToken.destroy({
+      where: {
+        id: req.keyStore.id,
+      },
+    });
+  }
 }
 
 module.exports = AccessService;

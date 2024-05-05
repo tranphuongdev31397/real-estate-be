@@ -1,14 +1,14 @@
-const jwt = require("jsonwebtoken");
+const JWT = require("jsonwebtoken");
 const ENV = require("../configs/env");
 const crypto = require("node:crypto");
 const { getInitData } = require(".");
 const KeyTokenService = require("../services/keyToken.service");
 
 const createTokenPair = ({ payload, privateKey }) => {
-  const accessToken = jwt.sign(payload, ENV.JWT_SECRET, {
+  const accessToken = JWT.sign(payload, ENV.JWT_SECRET, {
     expiresIn: 30,
   });
-  const refreshToken = jwt.sign(payload, privateKey, {
+  const refreshToken = JWT.sign(payload, privateKey, {
     expiresIn: 60,
   });
 
