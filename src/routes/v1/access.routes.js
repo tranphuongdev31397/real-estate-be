@@ -2,6 +2,7 @@ const {
   signUpController,
   signInController,
   signOutController,
+  refreshTokenController,
 } = require("../../controllers/access.controller");
 const { BadRequestError } = require("../../core/error.response");
 const { SuccessResponse } = require("../../core/success.response");
@@ -23,4 +24,7 @@ accessRoutes.get(
 );
 
 accessRoutes.get("/sign-out", asyncHandler(signOutController));
+
+accessRoutes.get("/refresh-token", asyncHandler(refreshTokenController));
+
 module.exports = accessRoutes;

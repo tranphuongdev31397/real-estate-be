@@ -1,4 +1,4 @@
-const { BadRequestError } = require("../core/error.response");
+const { BadRequestError, AuthFailError } = require("../core/error.response");
 const { Created, SuccessResponse, OK } = require("../core/success.response");
 const AccessService = require("../services/access.service");
 
@@ -29,8 +29,26 @@ const signOutController = async (req, res, next) => {
   }).send(res);
 };
 
+const refreshTokenController = async (req, res, next) => {
+  const keyStore = req.keyStore;
+  const user = req.userInfo;
+  if (!keyStore || req.refreshToken !== keyStore.refreshToken) {
+    throw new AuthFailError("Invalid Token");
+  }
+  const tokens = await AccessService.refreshToken({
+    user,
+  });
+
+  return new OK({
+    metadata: {
+      tokens,
+    },
+  }).send(res);
+};
+
 module.exports = {
   signUpController,
   signInController,
   signOutController,
+  refreshTokenController,
 };
