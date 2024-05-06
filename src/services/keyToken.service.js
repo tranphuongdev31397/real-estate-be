@@ -1,7 +1,12 @@
+const { BadRequestError } = require("../core/error.response");
 const db = require("../models");
 
 class KeyTokenService {
   static async createKeyToken({ userId, privateKey, refreshToken, publicKey }) {
+    if (!userId) {
+      throw new BadRequestError();
+    }
+
     const [keyStore, created] = await db.KeyToken.findOrCreate({
       where: {
         userId,
@@ -24,6 +29,10 @@ class KeyTokenService {
   }
 
   static async getKeyTokenByUserId(userId) {
+    if (!userId) {
+      throw new BadRequestError();
+    }
+
     const keyStore = await db.KeyToken.findOne({
       where: {
         userId,
