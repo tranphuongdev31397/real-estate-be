@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      User.hasOne(models.KeyToken, {
+        foreignKey: "userId",
+        as: "tokens",
+      });
     }
   }
   User.init(
@@ -51,5 +55,6 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   User.beforeCreate((user) => (user.id = uuidv4()));
+
   return User;
 };

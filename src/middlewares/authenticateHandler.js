@@ -3,26 +3,48 @@ const { HEADER } = require("../contants/request");
 const { AuthFailError } = require("../core/error.response");
 const JWT = require("jsonwebtoken");
 const asyncHandler = require("./asyncHandler");
+const KeyTokenService = require("../services/keyToken.service");
 const authenticateHandler = asyncHandler(async (req, res, next) => {
   const refreshToken = req.headers?.[HEADER.REFRESH_TOKEN];
-  const accessToken = req.headers?.[HEADER.AUTHORIZATION];
-  if (!accessToken) {
+
+  const bearerToken = req.headers?.[HEADER.AUTHORIZATION];
+
+  if (!bearerToken) {
+    throw new AuthFailError();
+  }
+
+  const [accessToken, _bearerMethod] = bearerToken.split(" ").reverse();
+
+  const userPayload = JWT.decode(accessToken);
+
+  if (!accessToken || !userPayload) {
+    throw new AuthFailError();
+  }
+
+  const keyStore = await KeyTokenService.getKeyTokenByUserId(userPayload?.id);
+
+  if (!keyStore) {
     throw new AuthFailError();
   }
 
   if (refreshToken) {
-    // TODO: refresh token flow
+    JWT.verify(refreshToken, keyStore.privateKey, (error, decode) => {
+      if (error) {
+        throw new AuthFailError();
+      }
+    });
   } else {
-    const accessTokenSplit = accessToken.replaceAll("Bearer ", "");
-    JWT.verify(accessTokenSplit, ENV.JWT_SECRET, (error, decode) => {
+    JWT.verify(accessToken, ENV.JWT_SECRET, (error, decode) => {
       if (error) {
         throw new AuthFailError("Token expired!", 409);
-      } else {
-        req.userInfo = decode;
-        next();
       }
     });
   }
+
+  req.userInfo = userPayload;
+  req.keyStore = keyStore;
+  req.refreshToken = refreshToken;
+  next();
 });
 
 module.exports = authenticateHandler;
