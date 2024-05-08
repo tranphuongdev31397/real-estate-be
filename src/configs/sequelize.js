@@ -7,7 +7,7 @@ module.exports = {
     username: ENV.DB_USERNAME,
     password: ENV.DB_PASSWORD,
     database: ENV.DB_NAME,
-    host: "127.0.0.1",
+    host: ENV.DB_HOST,
     dialect: ENV.DB_DIALECT,
     ...dbOptions,
   },
