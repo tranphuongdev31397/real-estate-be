@@ -19,10 +19,11 @@ app.get(
   "/get-ip",
   asyncHandler((req, res) => {
     const ipAddresses =
-      req.ip ||
-      req.connection.remoteAddress ||
+      req.headers["cf-connecting-ip"] ||
+      req.headers["x-real-ip"] ||
+      req.headers["x-forwarded-for"] ||
       req.socket.remoteAddress ||
-      req.connection.socket.remoteAddress;
+      "";
     res.send(ipAddresses);
   })
 );
