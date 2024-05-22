@@ -18,7 +18,11 @@ app.use(express.urlencoded({ extended: true }));
 app.get(
   "/get-ip",
   asyncHandler((req, res) => {
-    const ipAddresses = requestIP.getClientIp(req);
+    const ipAddresses =
+      req.ip ||
+      req.connection.remoteAddress ||
+      req.socket.remoteAddress ||
+      req.connection.socket.remoteAddress;
     res.send(ipAddresses);
   })
 );
