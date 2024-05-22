@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const db = require("./models/index.js");
 const { errorHandler, asyncHandler } = require("./middlewares/index.js");
 const {
   ConflictRequestError,
@@ -11,10 +10,18 @@ const router = require("./routes/v1/index.js");
 const app = express();
 require("dotenv").config();
 require("./configs/db.js");
-
+const requestIP = require("request-ip");
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.get(
+  "/get-ip",
+  asyncHandler((req, res) => {
+    const ipAddresses = requestIP.getClientIp(req);
+    res.send(ipAddresses);
+  })
+);
 
 app.get(
   "/",
@@ -22,6 +29,7 @@ app.get(
     res.send("Hello World");
   })
 );
+
 app.use(router);
 
 app.use((req, res, next) => {
