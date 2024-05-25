@@ -11,9 +11,17 @@ const signUpController = async (req, res, next) => {
 
 const signInController = async (req, res, next) => {
   const data = await AccessService.signIn({ ...req.body });
-
+  const ipAddresses =
+    req.headers["cf-connecting-ip"] ||
+    req.headers["x-real-ip"] ||
+    req.headers["x-forwarded-for"] ||
+    req.socket.remoteAddress ||
+    "";
   return new SuccessResponse({
-    metadata: data,
+    metadata: {
+      ...data,
+      ipAddresses,
+    },
   }).send(res);
 };
 

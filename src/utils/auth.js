@@ -5,10 +5,10 @@ const KeyTokenService = require("../services/keyToken.service");
 const { ErrorResponse, AuthFailError } = require("../core/error.response");
 const createTokenPair = ({ payload, privateKey }) => {
   const accessToken = JWT.sign(payload, ENV.JWT_SECRET, {
-    expiresIn: 30,
+    expiresIn: 5,
   });
   const refreshToken = JWT.sign(payload, privateKey, {
-    expiresIn: 60,
+    expiresIn: 10,
   });
 
   return { accessToken, refreshToken };
