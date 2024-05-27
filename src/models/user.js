@@ -38,8 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       User.belongsTo(models.Role, {
         foreignKey: "role",
         targetKey: "code",
-        as: "userRole",
-        onDelete: "CASCADE",
+        as: "roleDetail",
       });
     }
   }
@@ -65,7 +64,6 @@ module.exports = (sequelize, DataTypes) => {
       address: DataTypes.STRING,
       role: {
         type: DataTypes.STRING,
-        defaultValue: null,
       },
       password: {
         type: DataTypes.STRING,

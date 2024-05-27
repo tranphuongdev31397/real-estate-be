@@ -33,9 +33,7 @@ module.exports = {
         allowNull: false,
       },
       role: {
-        type: Sequelize.ENUM,
-        values: ["ADMIN", "AGENT", "USER"],
-        defaultValue: "USER",
+        type: Sequelize.STRING,
       },
       avatar: {
         type: Sequelize.STRING,

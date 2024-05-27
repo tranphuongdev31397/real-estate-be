@@ -1,4 +1,3 @@
-const { includes } = require("lodash");
 const {
   signUpController,
   signInController,
@@ -22,12 +21,10 @@ accessRoutes.get(
   "/get-info",
   asyncHandler(async (req, res) => {
     const info = await db.User.findByPk(req.userInfo.id, {
-      include: [
-        {
-          model: db.Role,
-          as: "userRole",
-        },
-      ],
+      include: {
+        model: db.Role,
+        as: "roleDetail",
+      },
     });
     new SuccessResponse({ metadata: info }).send(res);
   })
