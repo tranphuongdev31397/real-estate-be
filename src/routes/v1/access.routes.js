@@ -1,3 +1,4 @@
+const { includes } = require("lodash");
 const {
   signUpController,
   signInController,
@@ -8,6 +9,7 @@ const { BadRequestError } = require("../../core/error.response");
 const { SuccessResponse } = require("../../core/success.response");
 const { authenticateHandler } = require("../../middlewares");
 const asyncHandler = require("../../middlewares/asyncHandler");
+const db = require("../../models");
 
 const accessRoutes = require("express").Router();
 
@@ -18,8 +20,16 @@ accessRoutes.post("/sign-in", asyncHandler(signInController));
 accessRoutes.use(authenticateHandler);
 accessRoutes.get(
   "/get-info",
-  asyncHandler((req, res) => {
-    new SuccessResponse({ metadata: req.userInfo }).send(res);
+  asyncHandler(async (req, res) => {
+    const info = await db.User.findByPk(req.userInfo.id, {
+      include: [
+        {
+          model: db.Role,
+          as: "userRole",
+        },
+      ],
+    });
+    new SuccessResponse({ metadata: info }).send(res);
   })
 );
 

@@ -14,6 +14,33 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "userId",
         as: "tokens",
       });
+
+      User.hasMany(models.UserMedia, {
+        foreignKey: "userId",
+        as: "media",
+      });
+
+      User.hasMany(models.Submission, {
+        foreignKey: "userId",
+        as: "submissions",
+      });
+
+      User.hasMany(models.Property, {
+        foreignKey: "postedBy",
+        as: "properties",
+      });
+
+      User.hasMany(models.Comment, {
+        foreignKey: "userId",
+        as: "comments",
+      });
+
+      User.belongsTo(models.Role, {
+        foreignKey: "role",
+        targetKey: "code",
+        as: "userRole",
+        onDelete: "CASCADE",
+      });
     }
   }
   User.init(
@@ -36,15 +63,15 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       address: DataTypes.STRING,
+      role: {
+        type: DataTypes.STRING,
+        defaultValue: null,
+      },
       password: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      role: {
-        type: DataTypes.ENUM,
-        values: ["ADMIN", "AGENT", "USER"],
-        defaultValue: "USER",
-      },
+
       avatar: DataTypes.STRING,
     },
     {
@@ -52,6 +79,19 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "User",
     }
   );
+
+  User.addHook("beforeCreate", async (user) => {
+    console.log(user);
+    if (!user.role) {
+      const defaultRole = await sequelize.models.Role.findOne({
+        where: {
+          value: "USER",
+        },
+      });
+
+      return (user.role = defaultRole?.code || null);
+    }
+  });
 
   return User;
 };

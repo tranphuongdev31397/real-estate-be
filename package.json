@@ -8,7 +8,8 @@
     "start": "node index.js",
     "db:generate": "npx sequelize-cli model:generate --name ${npm_config_table} --attributes firstName:string,lastName:string,email:string",
     "db:migrate": "npx sequelize-cli db:migrate",
-    "db:reset": "npx sequelize-cli db:migrate:undo:all && npm run db:migrate",
+    "db:seed": "npx sequelize-cli db:seed:all",
+    "db:reset": "npx sequelize-cli db:migrate:undo:all && npm run db:migrate && npx sequelize-cli db:seed:undo:all && npm run db:seed",
     "db:undo": "npx sequelize-cli db:migrate:undo",
     "render:build": "npm i && npm run db:migrate"
   },

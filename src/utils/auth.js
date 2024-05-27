@@ -2,7 +2,6 @@ const JWT = require("jsonwebtoken");
 const ENV = require("../configs/env");
 const crypto = require("node:crypto");
 const KeyTokenService = require("../services/keyToken.service");
-const { ErrorResponse, AuthFailError } = require("../core/error.response");
 const createTokenPair = ({ payload, privateKey }) => {
   const accessToken = JWT.sign(payload, ENV.JWT_SECRET, {
     expiresIn: ENV.JWT_EXPIRES_IN,
