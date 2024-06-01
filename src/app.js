@@ -7,10 +7,10 @@ const {
   BadRequestError,
 } = require("./core/error.response.js");
 const router = require("./routes/v1/index.js");
+const { pingServer } = require("./utils/cron.js");
 const app = express();
 require("dotenv").config();
 require("./configs/db.js");
-const requestIP = require("request-ip");
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -43,5 +43,7 @@ app.use((req, res, next) => {
   next(error);
 });
 app.use(errorHandler);
+
+pingServer.start();
 
 module.exports = app;
