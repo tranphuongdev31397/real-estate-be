@@ -11,7 +11,7 @@
     "db:seed": "npx sequelize-cli db:seed:all",
     "db:reset": "npx sequelize-cli db:migrate:undo:all && npm run db:migrate && npx sequelize-cli db:seed:undo:all && npm run db:seed",
     "db:undo": "npx sequelize-cli db:migrate:undo",
-    "render:build": "npm i && npm run db:migrate"
+    "render:build": "npm i && npm run db:migrate && npm run db:seed"
   },
   "keywords": [],
   "author": "",
