@@ -35,7 +35,7 @@ class AccessService {
 
     const initData = getInitData({
       object: userData,
-      fields: ["id", "name", "email", "phone"],
+      fields: ["id", "name", "email", "phone", "role"],
     });
 
     const tokens = await generateToken(initData);
@@ -70,7 +70,7 @@ class AccessService {
 
     const initData = getInitData({
       object: userFound,
-      fields: ["id", "name", "email", "phone"],
+      fields: ["id", "name", "email", "phone", "role"],
     });
 
     const tokens = await generateToken(initData);
@@ -98,7 +98,7 @@ class AccessService {
 
     const initData = getInitData({
       object: userFound,
-      fields: ["id", "name", "email", "phone"],
+      fields: ["id", "name", "email", "phone", "role"],
     });
 
     const tokens = await generateToken(initData);
