@@ -1,3 +1,4 @@
+const { ROLES } = require("../../contants/roles");
 const {
   signUpController,
   signInController,
@@ -6,7 +7,7 @@ const {
 } = require("../../controllers/access.controller");
 const { BadRequestError } = require("../../core/error.response");
 const { SuccessResponse } = require("../../core/success.response");
-const { authenticateHandler } = require("../../middlewares");
+const { authenticateHandler, permissionHandler } = require("../../middlewares");
 const asyncHandler = require("../../middlewares/asyncHandler");
 const db = require("../../models");
 
@@ -16,9 +17,12 @@ accessRoutes.post("/sign-up", asyncHandler(signUpController));
 accessRoutes.post("/sign-in", asyncHandler(signInController));
 
 // ===== Authentication routes =====
-accessRoutes.use(authenticateHandler);
+// accessRoutes.use(authenticateHandler);
+
 accessRoutes.get(
   "/get-info",
+  authenticateHandler,
+  permissionHandler([ROLES.ADMIN, ROLES.AGENT]),
   asyncHandler(async (req, res) => {
     const info = await db.User.findByPk(req.userInfo.id, {
       include: {

@@ -1,6 +1,10 @@
 const express = require("express");
 const cors = require("cors");
-const { errorHandler, asyncHandler } = require("./middlewares/index.js");
+const {
+  errorHandler,
+  asyncHandler,
+  permissionHandler,
+} = require("./middlewares/index.js");
 const {
   ConflictRequestError,
   AuthFailError,
