@@ -79,7 +79,6 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   User.addHook("beforeCreate", async (user) => {
-    console.log(user);
     if (!user.role) {
       const defaultRole = await sequelize.models.Role.findOne({
         where: {

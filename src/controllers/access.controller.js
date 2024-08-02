@@ -40,6 +40,7 @@ const signOutController = async (req, res, next) => {
 const refreshTokenController = async (req, res, next) => {
   const keyStore = req.keyStore;
   const user = req.userInfo;
+
   if (!keyStore || req.refreshToken !== keyStore.refreshToken) {
     throw new AuthFailError("Invalid Token");
   }

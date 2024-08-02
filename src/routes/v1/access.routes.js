@@ -5,7 +5,6 @@ const {
   signOutController,
   refreshTokenController,
 } = require("../../controllers/access.controller");
-const { BadRequestError } = require("../../core/error.response");
 const { SuccessResponse } = require("../../core/success.response");
 const { authenticateHandler, permissionHandler } = require("../../middlewares");
 const asyncHandler = require("../../middlewares/asyncHandler");
@@ -34,8 +33,16 @@ accessRoutes.get(
   })
 );
 
-accessRoutes.get("/sign-out", asyncHandler(signOutController));
+accessRoutes.get(
+  "/sign-out",
+  authenticateHandler,
+  asyncHandler(signOutController)
+);
 
-accessRoutes.get("/refresh-token", asyncHandler(refreshTokenController));
+accessRoutes.get(
+  "/refresh-token",
+  authenticateHandler,
+  asyncHandler(refreshTokenController)
+);
 
 module.exports = accessRoutes;
