@@ -65,7 +65,6 @@ const searchByDefault = (search, searchByFields) => {
     searchByFields.length > 0
   ) {
     // Case user just push search is string and have searchByFields default
-    console.log("first");
     return {
       keyword: search,
       searchBy: searchByFields,
@@ -97,4 +96,22 @@ const sortHandler = (sort) => {
   return Object.entries(sort);
 };
 
-module.exports = { searchHandler, filterHandler, searchByDefault, sortHandler };
+const pagination = ({ page, limit }) => {
+  if (!page || !limit) return;
+
+  if (page <= 0 || limit <= 0) {
+    throw new BadRequestError("Invalid page or limit");
+  }
+
+  const offset = (page - 1) * limit;
+
+  return { offset, limit: +limit };
+};
+
+module.exports = {
+  searchHandler,
+  filterHandler,
+  searchByDefault,
+  sortHandler,
+  pagination,
+};
