@@ -17,11 +17,13 @@ const authenticateHandler = asyncHandler(async (req, res, next) => {
   const [accessToken, _bearerMethod] = bearerToken.split(" ").reverse();
 
   const userPayload = JWT.decode(accessToken);
+
   if (!accessToken || !userPayload) {
     throw new AuthFailError();
   }
 
   const keyStore = await KeyTokenService.getKeyTokenByUserId(userPayload?.id);
+
   if (!keyStore) {
     throw new AuthFailError();
   }

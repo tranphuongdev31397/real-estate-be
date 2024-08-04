@@ -2,7 +2,19 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert("Roles", [
+    const existingData = await queryInterface.rawSelect(
+      "Roles",
+      {
+        where: {
+          code: ["ADMIN", "AGENT", "OWNER", "USER"],
+        },
+      },
+      ["id"]
+    );
+    if (existingData) {
+      return;
+    }
+    return await queryInterface.bulkInsert("Roles", [
       {
         id: Sequelize.literal("gen_random_uuid()"),
         code: "ADMIN",
