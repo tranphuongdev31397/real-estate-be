@@ -1,10 +1,14 @@
 const db = require("../models");
-const { filterHandler } = require("../utils/queryHandler");
+const { filterHandler, searchByDefault } = require("../utils/queryHandler");
 
 class PropertyTypeService {
-  static async getAllPropertyTypes({ filters }) {
+  static async getAllPropertyTypes({ filters, search, sort }) {
+    const searchDefault = searchByDefault(search, ["name"]);
+
+    const whereOptions = filterHandler({ filters, search: searchDefault });
+
     const propertyTypes = await db.PropertyType.findAll({
-      where: filterHandler(filters),
+      where: whereOptions,
     });
     return propertyTypes;
   }
