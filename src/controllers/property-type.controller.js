@@ -7,6 +7,7 @@ const getPropertiesType = async (req, res, next) => {
   const propertyTypes = await PropertyTypeService.getAllPropertyTypes({
     filters,
     search,
+    sort,
   });
 
   return new SuccessResponse({
