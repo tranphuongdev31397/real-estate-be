@@ -88,8 +88,13 @@ const filterHandler = (query) => {
   };
 };
 
-module.exports = { searchHandler, filterHandler, searchByDefault };
+const sortHandler = (sort) => {
+  if (!sort || isEmpty(sort)) return;
+  if (!isObject(sort)) {
+    throw new BadRequestError("Sort Function is invalid");
+  }
 
-/* DOCUMENT
-  - Search function: 
-*/
+  return Object.entries(sort);
+};
+
+module.exports = { searchHandler, filterHandler, searchByDefault, sortHandler };
