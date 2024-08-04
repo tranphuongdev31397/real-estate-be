@@ -8,6 +8,8 @@ const getPropertiesType = async (req, res, next) => {
     filters,
     search,
     sort,
+    page,
+    limit,
   });
 
   return new SuccessResponse({
