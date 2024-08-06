@@ -38,19 +38,19 @@ const searchHandler = (searchQuery) => {
 };
 
 /**
- * The function `searchByDefault` takes in a search term and search fields, and returns a search object
+ * The function `applyDefaultSearchBy` takes in a search term and search fields, and returns a search object
  * with keyword and searchBy fields based on the input.
  * @param search - The `search` parameter is used to specify the search query that the user wants to
  * perform. It can be a string containing the keyword to search for or an object with the properties
  * `keyword` and `searchBy`.
- * @param searchByFields - `searchByFields` is an array that contains the fields that the user wants to
+ * @param searchByFields - `applyDefaultSearchBy` is an array that contains the fields that the user wants to
  * search by.
- * @returns The function `searchByDefault` will return an object with `keyword` and `searchBy`
+ * @returns The function `applyDefaultSearchBy` will return an object with `keyword` and `searchBy`
  * properties if the conditions in the code are met. If the conditions are not met, it will throw a
  * `BadRequestError` with the message "Search Function is invalid".
  */
-const searchByDefault = (search, searchByFields) => {
-  if (!search) {
+const applyDefaultSearchBy = (search, searchByFields) => {
+  if (!search || !searchByFields || searchByFields.length === 0) {
     return;
   }
   if (isObject(search) && !!search?.keyword && search?.searchBy?.length > 0) {
@@ -59,11 +59,7 @@ const searchByDefault = (search, searchByFields) => {
     return search;
   }
 
-  if (
-    typeof search === "string" &&
-    search.length !== 0 &&
-    searchByFields.length > 0
-  ) {
+  if (typeof search === "string" && search.length !== 0) {
     // Case user just push search is string and have searchByFields default
     return {
       keyword: search,
@@ -71,7 +67,7 @@ const searchByDefault = (search, searchByFields) => {
     };
   }
 
-  throw new BadRequestError("Search Function is invalid");
+  throw new BadRequestError("Search: Not correctly formatted");
 };
 
 const filterHandler = (query) => {
@@ -81,16 +77,14 @@ const filterHandler = (query) => {
 
   const searchWhere = searchHandler(search);
   return {
-    [Op.and]: {
-      ...searchWhere,
-    },
+    [Op.and]: [searchWhere, filters],
   };
 };
 
 const sortHandler = (sort) => {
   if (!sort || isEmpty(sort)) return;
   if (!isObject(sort)) {
-    throw new BadRequestError("Sort Function is invalid");
+    throw new BadRequestError("Sort: Not correctly formatted");
   }
 
   return Object.entries(sort);
@@ -100,7 +94,7 @@ const pagination = ({ page, limit }) => {
   if (!page || !limit) return;
 
   if (page <= 0 || limit <= 0) {
-    throw new BadRequestError("Invalid page or limit");
+    throw new BadRequestError("Paginate: Not correctly formatted");
   }
 
   const offset = (page - 1) * limit;
@@ -111,7 +105,7 @@ const pagination = ({ page, limit }) => {
 module.exports = {
   searchHandler,
   filterHandler,
-  searchByDefault,
+  applyDefaultSearchBy,
   sortHandler,
   pagination,
 };

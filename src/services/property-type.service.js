@@ -2,15 +2,14 @@ const { BadRequestError } = require("../core/error.response");
 const db = require("../models");
 const {
   filterHandler,
-  searchByDefault,
   sortHandler,
   pagination,
+  applyDefaultSearchBy,
 } = require("../utils/queryHandler");
 
 class PropertyTypeService {
   static async getAllPropertyTypes({ filters, search, sort, page, limit }) {
-    const searchDefault = searchByDefault(search, ["name"]);
-
+    const searchDefault = applyDefaultSearchBy(search, ["name"]);
     const whereOptions = filterHandler({ filters, search: searchDefault });
     const sortOptions = sortHandler(sort);
     const paginate = pagination({ page, limit });
@@ -29,12 +28,11 @@ class PropertyTypeService {
       const { rows, count } = response;
 
       return {
-        data: rows,
-        paginate: {
-          limit: +limit,
-          page: +page,
-          total: count,
-        },
+        records: rows,
+        limit: +limit,
+        page: +page,
+        total: count,
+        totalPage: Math.ceil(count / limit),
       };
     }
 
@@ -47,7 +45,7 @@ class PropertyTypeService {
       throw new BadRequestError("Couldn't find PropertyType");
     }
     return {
-      data: propertyTypes,
+      records: propertyTypes,
     };
   }
 }
