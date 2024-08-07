@@ -90,7 +90,7 @@ const sortHandler = (sort) => {
   return Object.entries(sort);
 };
 
-const pagination = ({ page, limit }) => {
+const getPaginationParams = ({ page, limit }) => {
   if (!page || !limit) return;
 
   if (page <= 0 || limit <= 0) {
@@ -99,7 +99,7 @@ const pagination = ({ page, limit }) => {
 
   const offset = (page - 1) * limit;
 
-  return { offset, limit: +limit };
+  return { offset, limit: +limit, page: +page };
 };
 
 module.exports = {
@@ -107,5 +107,5 @@ module.exports = {
   filterHandler,
   applyDefaultSearchBy,
   sortHandler,
-  pagination,
+  getPaginationParams,
 };
