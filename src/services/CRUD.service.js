@@ -37,6 +37,61 @@ class CRUDService {
       totalPage: Math.ceil(count / limit),
     };
   }
+
+  async getOne({ id }) {
+    const response = await this.model.findByPk(id);
+
+    if (!response) {
+      throw new BadRequestError(
+        `Couldn't find ${this.model.name} with id: ${id}`
+      );
+    }
+
+    return response;
+  }
+
+  async create({ data }) {}
+
+  async deleteOne({ id }) {
+    const itemFound = await this.model.findByPk(id);
+    if (!itemFound) {
+      throw new BadRequestError(
+        `Couldn't find ${this.model.name} with id: ${id}`
+      );
+    }
+    const response = await this.model.destroy({ where: { id } });
+
+    if (!response) {
+      throw new BadRequestError(
+        `Couldn't delete ${this.model.name} with id: ${id}`
+      );
+    }
+
+    return {
+      data: itemFound,
+    };
+  }
+
+  async deleteMany({ ids }) {
+    if (!ids?.length) {
+      throw new BadRequestError("No ids provided");
+    }
+
+    const itemFound = await this.model.findAll({
+      where: { id: ids },
+    });
+
+    const response = await this.model.destroy({ where: { id: ids } });
+
+    if (!response) {
+      throw new BadRequestError(
+        `Couldn't delete ${this.model.name} with id: ${ids}`
+      );
+    }
+    return {
+      data: itemFound,
+    };
+  }
 }
 
 module.exports = CRUDService;
