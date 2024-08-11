@@ -1,4 +1,8 @@
-const { BadRequestError } = require("../core/error.response");
+const { where } = require("sequelize");
+const {
+  BadRequestError,
+  ConflictRequestError,
+} = require("../core/error.response");
 const {
   getPaginationParams,
   sortHandler,
@@ -50,7 +54,40 @@ class CRUDService {
     return response;
   }
 
-  async create({ data }) {}
+  async create({
+    body,
+    find = undefined,
+    options = {
+      customError: () => {},
+    },
+  }) {
+    let response;
+
+    if (find) {
+      const [data, isSuccess] = await this.model.findOrCreate({
+        where: find,
+        defaults: body,
+      });
+
+      if (!isSuccess) {
+        if (options?.customError) {
+          options?.customError?.(data);
+        }
+        throw new ConflictRequestError(`${this.model.name} already exists`);
+      }
+
+      response = data;
+    } else {
+      response = await this.model.create(body);
+    }
+
+    if (!response) {
+      throw new BadRequestError(`Couldn't create ${this.model.name}`);
+    }
+    return {
+      response,
+    };
+  }
 
   async deleteOne({ id }) {
     const itemFound = await this.model.findByPk(id);

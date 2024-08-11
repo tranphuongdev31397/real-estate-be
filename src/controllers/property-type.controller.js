@@ -31,6 +31,20 @@ const getOnePropertyType = async (req, res, next) => {
   }).send(res);
 };
 
+const createPropertyType = async (req, res, next) => {
+  const body = req.body;
+
+  const propertyTypes = await PropertyTypeService.create({
+    body,
+    find: {
+      name: body.name,
+    },
+  });
+  return new SuccessResponse({
+    metadata: propertyTypes,
+  }).send(res);
+};
+
 const deleteOnePropertyType = async (req, res, next) => {
   const { id } = req.params;
 
@@ -45,7 +59,6 @@ const deleteOnePropertyType = async (req, res, next) => {
 const deleteManyPropertyTypes = async (req, res, next) => {
   const { ids } = req.body;
 
-  console.log(ids);
   const propertyTypes = await PropertyTypeService.deleteMany({
     ids,
   });
@@ -59,4 +72,5 @@ module.exports = {
   getOnePropertyType,
   deleteOnePropertyType,
   deleteManyPropertyTypes,
+  createPropertyType,
 };
