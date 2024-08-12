@@ -1,8 +1,10 @@
-const { where } = require("sequelize");
+"use strict";
+
 const {
   BadRequestError,
   ConflictRequestError,
 } = require("../core/error.response");
+const { removeUndefinedAndNullNestedObject } = require("../utils");
 const {
   getPaginationParams,
   sortHandler,
@@ -86,6 +88,39 @@ class CRUDService {
     }
     return {
       response,
+    };
+  }
+
+  async update({
+    body,
+    id,
+    options = {
+      customError: () => {},
+      shouldRemoveFalsyValue: true,
+    },
+  }) {
+    if (options?.shouldRemoveFalsyValue) {
+      body = removeUndefinedAndNullNestedObject(body);
+    }
+
+    const itemFound = await this.model.findByPk(id);
+
+    if (!itemFound) {
+      throw new BadRequestError(
+        `Couldn't find ${this.model.name} with id: ${id}`
+      );
+    }
+
+    const response = await itemFound.update(body);
+
+    if (!response) {
+      throw new BadRequestError(
+        `Couldn't update ${this.model.name} with id: ${id}`
+      );
+    }
+
+    return {
+      data: itemFound,
     };
   }
 

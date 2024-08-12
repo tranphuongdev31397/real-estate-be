@@ -45,6 +45,20 @@ const createPropertyType = async (req, res, next) => {
   }).send(res);
 };
 
+const updatePropertyType = async (req, res, next) => {
+  const body = req.body;
+  const { id } = req.params;
+
+  const propertyTypes = await PropertyTypeService.update({
+    body,
+    id,
+  });
+
+  return new SuccessResponse({
+    metadata: propertyTypes,
+  }).send(res);
+};
+
 const deleteOnePropertyType = async (req, res, next) => {
   const { id } = req.params;
 
@@ -73,4 +87,5 @@ module.exports = {
   deleteOnePropertyType,
   deleteManyPropertyTypes,
   createPropertyType,
+  updatePropertyType,
 };
