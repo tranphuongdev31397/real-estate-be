@@ -21,7 +21,6 @@ accessRoutes.post("/sign-in", asyncHandler(signInController));
 accessRoutes.get(
   "/get-info",
   authenticateHandler,
-  permissionHandler([ROLES.ADMIN, ROLES.AGENT]),
   asyncHandler(async (req, res) => {
     const info = await db.User.findByPk(req.userInfo.id, {
       include: {
