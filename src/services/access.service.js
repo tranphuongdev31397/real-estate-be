@@ -24,6 +24,7 @@ class AccessService {
         phone,
         email,
         password: hashedPassword,
+        role,
       },
     });
 

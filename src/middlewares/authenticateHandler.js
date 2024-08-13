@@ -7,7 +7,6 @@ const KeyTokenService = require("../services/keyToken.service");
 const AccessService = require("../services/access.service");
 const authenticateHandler = asyncHandler(async (req, res, next) => {
   const refreshToken = req.headers?.[HEADER.REFRESH_TOKEN];
-
   const bearerToken = req.headers?.[HEADER.AUTHORIZATION];
 
   if (!bearerToken) {

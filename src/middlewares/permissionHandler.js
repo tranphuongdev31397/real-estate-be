@@ -26,10 +26,7 @@ const permissionHandler = (permissions) =>
       throw new AuthFailError("User is not exists!");
     }
 
-    console.log("current", _user);
-
     const currentRole = userInfo.role;
-    console.log("req", currentRole);
 
     if (_user.role !== currentRole) {
       // Throw this error to request user sign in again
@@ -43,6 +40,20 @@ const permissionHandler = (permissions) =>
     // }
 
     // STEP: Check current role exist in db
+
+    const roleExistInDb = await db.Role.findOne({
+      role: currentRole,
+    });
+
+    if (!roleExistInDb) {
+      throw new BadRequestError("User role invalid!");
+    }
+
+    // Check authorization
+
+    if (!permissions.includes(currentRole)) {
+      throw new AuthFailError("Permission denied!");
+    }
 
     next();
   });
