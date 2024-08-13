@@ -52,7 +52,7 @@ const permissionHandler = (permissions) =>
     // Check authorization
 
     if (!permissions.includes(currentRole)) {
-      throw new AuthFailError("Unauthorized");
+      throw new AuthFailError("Permission denied!");
     }
 
     next();
