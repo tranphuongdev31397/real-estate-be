@@ -1,12 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const { errorHandler, asyncHandler } = require("./middlewares/index.js");
-
 const router = require("./routes/v1/index.js");
 const { pingServer } = require("./utils/cron.js");
 const app = express();
 require("dotenv").config();
 require("./configs/db.js");
+require("./configs/cloudinary.js").config();
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
