@@ -1,16 +1,5 @@
 const { cloudinary } = require("../configs/cloudinary");
 // Upload an image
-const uploadResult = async (req, res) => {
-  try {
-    await cloudinary.uploader.upload(
-      "https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg",
-      {}
-    );
-    // console.log(res);
-  } catch (err) {
-    throw err;
-  }
-};
 
 // Optimize delivery by resizing and applying auto-format and auto-quality
 const optimizeUrl = (file) => {
@@ -20,11 +9,9 @@ const optimizeUrl = (file) => {
   });
 };
 
-console.log(optimizeUrl);
-
 // Transform the image: auto-crop to square aspect_ratio
-const autoCropUrl = () => {
-  cloudinary.url("shoes", {
+const autoCropUrl = (file) => {
+  cloudinary.url(file, {
     crop: "auto",
     gravity: "auto",
     width: 500,
@@ -34,6 +21,5 @@ const autoCropUrl = () => {
 
 module.exports = {
   autoCropUrl,
-  uploadResult,
   optimizeUrl,
 };
