@@ -20,7 +20,6 @@ const uploadController = async (req, res, next) => {
 const uploadMultiController = async (req, res, next) => {
   const { files, type } = req;
 
-  console.log(files);
   if (!files || files.length === 0) {
     throw new BadRequestError("No files uploaded.");
   }
