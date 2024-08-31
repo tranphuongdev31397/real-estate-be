@@ -11,7 +11,7 @@ const ENV = require("../configs/env");
 const { generateToken } = require("../utils/auth");
 const { findUserById } = require("../repositories/user.repo");
 class AccessService {
-  static async signUp({ phone, email, password }) {
+  static async signUp({ phone, email, password, role }) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const [userData, isSuccess] = await db.User.findOrCreate({
       where: {
