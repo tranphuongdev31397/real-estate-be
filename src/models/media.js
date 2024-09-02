@@ -1,7 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class PropertyType extends Model {
+  class Media extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,35 +9,41 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      PropertyType.hasMany(models.Property, {
-        foreignKey: "propertyTypeId",
-      });
     }
   }
-  PropertyType.init(
+  Media.init(
     {
-      name: {
+      filename: {
         type: DataTypes.STRING,
-        validate: {
-          min: 3,
-          max: 50,
-        },
-        allowNull: false,
+        allowNull: true,
       },
-      description: {
-        type: DataTypes.TEXT,
-        allowNull: false,
+      mimetype: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
-      image: {
+      publicId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      relation: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      relationId: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: true,
+      },
+      url: {
         type: DataTypes.STRING,
         allowNull: false,
       },
     },
     {
       sequelize,
-      modelName: "PropertyType",
+      modelName: "Media",
     }
   );
-
-  return PropertyType;
+  return Media;
 };

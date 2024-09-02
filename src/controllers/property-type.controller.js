@@ -1,4 +1,6 @@
+const { BelongsTo, literal, HasMany } = require("sequelize");
 const { SuccessResponse } = require("../core/success.response");
+const db = require("../models");
 const PropertyTypeService = require("../services/property-type.service");
 
 const getPropertiesType = async (req, res, next) => {
@@ -12,6 +14,20 @@ const getPropertiesType = async (req, res, next) => {
     limit,
     options: {
       searchDefault: ["name"],
+      attributes: { exclude: ["image"] },
+      include: [
+        {
+          model: db.Media,
+          required: false,
+          attributes: ["url"],
+          association: new BelongsTo(db.PropertyType, db.Media, {
+            targetKey: "publicId",
+            foreignKey: "image",
+            constraints: false,
+            as: "urls",
+          }),
+        },
+      ],
     },
   });
 
