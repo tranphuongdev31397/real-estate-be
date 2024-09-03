@@ -1,30 +1,30 @@
 const { cloudinary } = require("../configs/cloudinary");
 const { CLOUDINARY_FOLDERS } = require("../contants/cloudinary");
 const { BadRequestError } = require("../core/error.response");
-const db = require("../models");
 const MediaService = require("./media.service");
 
 class UploadService {
   static async uploadSingle({ file, options }) {
     const res = await cloudinary.uploader.upload(file.path, {
-      folder: CLOUDINARY_FOLDERS.IMAGES,
+      folder: CLOUDINARY_FOLDERS.OTHERS,
+      resource_type: "auto",
       ...options,
     });
 
-    const data = await db.Media.create({
-      publicId: res.public_id,
-      url: res.secure_url,
-      filename: res.filename,
-      mimetype: file.mimetype,
-      created_at: res.created_at,
-    });
-    if (!res) {
+    if (!res || !res.secure_url || !res.public_id) {
       throw new BadRequestError("Failed to upload file");
     }
-    return {
-      ...res,
-      mimetype: file.mimetype,
-    };
+
+    const response = await MediaService.create({
+      body: {
+        publicId: res.public_id,
+        url: res.secure_url,
+        filename: res.original_filename,
+        mimetype: file.mimetype,
+      },
+    });
+
+    return response;
   }
 }
 
