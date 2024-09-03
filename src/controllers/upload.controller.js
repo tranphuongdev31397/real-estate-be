@@ -2,7 +2,6 @@ const { CLOUDINARY_FOLDERS } = require("../contants/cloudinary");
 const { BadRequestError } = require("../core/error.response");
 const { SuccessResponse } = require("../core/success.response");
 const UploadService = require("../services/upload.service");
-const { getInitData } = require("../utils");
 
 const uploadController = async (req, res, next) => {
   const {
