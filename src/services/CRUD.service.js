@@ -4,6 +4,7 @@ const {
   BadRequestError,
   ConflictRequestError,
 } = require("../core/error.response");
+const db = require("../models");
 const { removeUndefinedAndNullNestedObject } = require("../utils");
 const {
   getPaginationParams,
@@ -17,15 +18,19 @@ class CRUDService {
     this.model = model;
   }
 
-  async getList({ filters, search, sort, page, limit, options }) {
-    const searchDefault = applyDefaultSearchBy(search, options?.searchDefault);
-    const whereParams = filterHandler({ filters, search: searchDefault });
+  async getList({ filters, search, sort, page, limit, join, options }) {
+    const { searchDefault, ...opts } = options || {};
+    const searchBy = applyDefaultSearchBy(search, searchDefault);
+    const whereParams = filterHandler({ filters, search: searchBy });
     const sortParams = sortHandler(sort);
     const paginationParams = getPaginationParams({ page, limit });
 
     const response = await this.model.findAndCountAll({
-      where: whereParams,
+      where: {
+        ...whereParams,
+      },
       order: sortParams,
+      ...opts,
       ...paginationParams,
     });
 
