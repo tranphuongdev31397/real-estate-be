@@ -28,9 +28,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      image: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      imageId: {
+        type: DataTypes.UUID,
+        allowNull: true,
       },
     },
     {

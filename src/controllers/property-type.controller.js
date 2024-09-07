@@ -14,17 +14,17 @@ const getPropertiesType = async (req, res, next) => {
     limit,
     options: {
       searchDefault: ["name"],
-      attributes: { exclude: ["image"] },
+      attributes: { exclude: ["imageId"] },
       include: [
         {
           model: db.Media,
           required: false,
           attributes: ["url"],
           association: new BelongsTo(db.PropertyType, db.Media, {
-            targetKey: "publicId",
-            foreignKey: "image",
+            targetKey: "id",
+            foreignKey: "imageId",
             constraints: false,
-            as: "urls",
+            as: "url",
           }),
         },
       ],
