@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      imageId: {
+      mediaId: {
         type: DataTypes.UUID,
         allowNull: true,
       },

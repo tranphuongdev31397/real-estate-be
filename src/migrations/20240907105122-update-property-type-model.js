@@ -11,7 +11,7 @@ module.exports = {
      */
     await queryInterface.removeColumn("PropertyTypes", "image");
 
-    await queryInterface.addColumn("PropertyTypes", "imageId", {
+    await queryInterface.addColumn("PropertyTypes", "mediaId", {
       type: Sequelize.UUID,
       allowNull: true,
     });
@@ -25,7 +25,7 @@ module.exports = {
      * await queryInterface.dropTable('users');
      */
 
-    await queryInterface.removeColumn("PropertyTypes", "imageId");
+    await queryInterface.removeColumn("PropertyTypes", "mediaId");
     await queryInterface.addColumn("PropertyTypes", "image", {
       type: Sequelize.STRING,
       allowNull: true,

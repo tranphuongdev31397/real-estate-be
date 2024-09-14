@@ -14,20 +14,9 @@ const getPropertiesType = async (req, res, next) => {
     limit,
     options: {
       searchDefault: ["name"],
-      attributes: { exclude: ["imageId"] },
-      include: [
-        {
-          model: db.Media,
-          required: false,
-          attributes: ["url"],
-          association: new BelongsTo(db.PropertyType, db.Media, {
-            targetKey: "id",
-            foreignKey: "imageId",
-            constraints: false,
-            as: "url",
-          }),
-        },
-      ],
+    },
+    sequelize: {
+      attributes: { exclude: ["mediaId"] },
     },
   });
 

@@ -3,6 +3,7 @@
 const {
   BadRequestError,
   ConflictRequestError,
+  ServerError,
 } = require("../core/error.response");
 const db = require("../models");
 const { removeUndefinedAndNullNestedObject } = require("../utils");
@@ -12,25 +13,40 @@ const {
   filterHandler,
   applyDefaultSearchBy,
 } = require("../utils/queryHandler");
+const { associationMedia } = require("../utils/request");
+const {
+  createRelation,
+  updateRelation,
+} = require("../repositories/media.repo");
 
 class CRUDService {
-  constructor({ model }) {
+  constructor({ model, withMedia = "" }) {
     this.model = model;
+    this.withMedia = withMedia;
   }
 
-  async getList({ filters, search, sort, page, limit, join, options }) {
-    const { searchDefault, ...opts } = options || {};
+  async getList({ filters, search, sort, page, limit, sequelize, options }) {
+    const { searchDefault } = options || {};
     const searchBy = applyDefaultSearchBy(search, searchDefault);
     const whereParams = filterHandler({ filters, search: searchBy });
     const sortParams = sortHandler(sort);
     const paginationParams = getPaginationParams({ page, limit });
+
+    const associationParams = !!this.withMedia
+      ? associationMedia({
+          belongModel: this.model,
+          foreignKey: this.withMedia,
+        })
+      : {};
 
     const response = await this.model.findAndCountAll({
       where: {
         ...whereParams,
       },
       order: sortParams,
-      ...opts,
+      include: [associationParams],
+      attributes: { exclude: [this.withMedia] },
+      ...sequelize,
       ...paginationParams,
     });
 
@@ -49,8 +65,21 @@ class CRUDService {
     };
   }
 
-  async getOne({ id }) {
-    const response = await this.model.findByPk(id);
+  async getOne({ id, sequelize, options }) {
+    const associationParams = !!this.withMedia
+      ? associationMedia({
+          belongModel: this.model,
+          foreignKey: this.withMedia,
+        })
+      : {};
+    const response = await this.model.findOne({
+      where: {
+        id,
+      },
+      include: [associationParams],
+      attributes: { exclude: [this.withMedia] },
+      ...sequelize,
+    });
 
     if (!response) {
       throw new BadRequestError(
@@ -91,6 +120,20 @@ class CRUDService {
     if (!response) {
       throw new BadRequestError(`Couldn't create ${this.model.name}`);
     }
+
+    if (!!this.withMedia) {
+      // Update relation
+      const mediaId = body[this.withMedia]; // body[forigenKey];
+      const created = await createRelation({
+        mediaId,
+        relationId: response.id,
+        relationModel: this.model,
+      });
+      if (!created) {
+        await relationModel.destroy({ where: { id: relationId } });
+        throw new ServerError(`Failed to create relation for media`);
+      }
+    }
     return {
       response,
     };
@@ -116,6 +159,28 @@ class CRUDService {
       );
     }
 
+    const fieldMedia = this.withMedia;
+    const bodyMediaId = body[fieldMedia]; // body[forigenKey];
+    const dbMediaId = itemFound[fieldMedia];
+    const shouldUpdateMedia =
+      !!fieldMedia && !!bodyMediaId && bodyMediaId !== dbMediaId;
+
+    if (shouldUpdateMedia) {
+      // Update relation
+      const updated = await updateRelation({
+        mediaId: bodyMediaId,
+        oldMediaId: dbMediaId,
+        relationId: itemFound.id,
+        relationModel: this.model,
+      });
+
+      if (!updated) {
+        throw new ServerError(
+          `Failed to update ${this.model.name} relation with media id: ${bodyMediaId}`
+        );
+      }
+    }
+
     const response = await itemFound.update(body);
 
     if (!response) {
@@ -136,7 +201,7 @@ class CRUDService {
         `Couldn't find ${this.model.name} with id: ${id}`
       );
     }
-    const response = await this.model.destroy({ where: { id } });
+    const response = await itemFound.destroy();
 
     if (!response) {
       throw new BadRequestError(

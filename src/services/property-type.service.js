@@ -3,7 +3,7 @@ const db = require("../models");
 
 class PropertyTypeService extends CRUDService {
   constructor() {
-    super({ model: db.PropertyType });
+    super({ model: db.PropertyType, withMedia: "mediaId" });
   }
 }
 
