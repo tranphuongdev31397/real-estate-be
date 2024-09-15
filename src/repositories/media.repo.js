@@ -25,12 +25,35 @@ const deleteMedia = async (mediaId) => {
   const mediaFound = await db.Media.findByPk(mediaId);
   if (mediaFound) {
     await mediaFound.destroy();
-    await cloudinary.uploader.destroy(mediaFound.publicId, {
+    cloudinary.uploader.destroy(mediaFound.publicId, {
       invalidate: true,
     });
-    console.log("first");
     return true;
   }
+};
+
+const deleteManyMedia = async (mediaIds) => {
+  const mediasFound = await db.Media.findAll({
+    where: { id: mediaIds },
+  });
+
+  console.log(mediasFound);
+
+  if (mediasFound) {
+    const publicIds = mediasFound.map((media) => media.publicId);
+
+    await db.Media.destroy({
+      where: {
+        id: mediaIds,
+      },
+    });
+    cloudinary.api.delete_resources(publicIds, {
+      invalidate: true,
+    });
+    return true;
+  }
+
+  return false;
 };
 
 const updateRelation = async ({
@@ -41,7 +64,7 @@ const updateRelation = async ({
 }) => {
   if (oldMediaId) {
     // Old media id can be null => don't need remove
-    const deleted = deleteMedia(oldMediaId);
+    const deleted = await deleteMedia(oldMediaId);
     if (!deleted) {
       throw new ServerError(`Delete Media: Something went wrong!`);
     }
@@ -58,4 +81,5 @@ module.exports = {
   createRelation,
   updateRelation,
   deleteMedia,
+  deleteManyMedia,
 };

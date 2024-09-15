@@ -17,6 +17,8 @@ const { associationMedia } = require("../utils/request");
 const {
   createRelation,
   updateRelation,
+  deleteMedia,
+  deleteManyMedia,
 } = require("../repositories/media.repo");
 
 class CRUDService {
@@ -130,7 +132,7 @@ class CRUDService {
         relationModel: this.model,
       });
       if (!created) {
-        await relationModel.destroy({ where: { id: relationId } });
+        await this.model.destroy({ where: { id: relationId } });
         throw new ServerError(`Failed to create relation for media`);
       }
     }
@@ -203,6 +205,11 @@ class CRUDService {
     }
     const response = await itemFound.destroy();
 
+    if (!!this.withMedia) {
+      const dbMediaId = itemFound[this.withMedia];
+      const deleted = await deleteMedia(dbMediaId);
+    }
+
     if (!response) {
       throw new BadRequestError(
         `Couldn't delete ${this.model.name} with id: ${id}`
@@ -230,6 +237,14 @@ class CRUDService {
         `Couldn't delete ${this.model.name} with id: ${ids}`
       );
     }
+
+    if (!!this.withMedia) {
+      const mediaIds = itemFound.map((item) => item[this.withMedia]);
+
+      console.log(mediaIds);
+      await deleteManyMedia(mediaIds);
+    }
+
     return {
       data: itemFound,
     };
